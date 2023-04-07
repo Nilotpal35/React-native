@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
   head: {
     borderBottomColor: "#D35400",
     borderBottomWidth: 5,
-    margin: 25,
+    marginHorizontal: 25,
     padding: 20,
+    //marginVertical: 25,
   },
 });

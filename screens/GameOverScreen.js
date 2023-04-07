@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import CustomButton from "../components/CustomButton";
 import Header from "../components/Header";
 
@@ -26,10 +26,13 @@ const styles = StyleSheet.create({
     color: "purple",
     fontWeight: "bold",
     fontSize: 20,
+    //paddingRight: 5
   },
   container: {
     margin: 20,
     padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mainContainer: {
     flex: 1,

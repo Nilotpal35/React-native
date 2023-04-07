@@ -1,13 +1,21 @@
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { SafeAreaView, useWindowDimensions, StyleSheet } from "react-native";
 
 export default function Card({ children }) {
-  return <SafeAreaView style={styles.mainContainer}>{children}</SafeAreaView>;
+  const { width, height } = useWindowDimensions();
+  const marginTopHeight = height < width ? 20 : 90;
+  return (
+    <SafeAreaView
+      style={[styles.mainContainer, { marginTop: marginTopHeight }]}
+    >
+      {children}
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: "#b42450",
-    marginTop: 80,
+    //marginTop: 80,
     marginHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",

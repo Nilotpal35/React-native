@@ -1,10 +1,9 @@
 import { useState } from "react";
 import {
   Alert,
-  Pressable,
-  SafeAreaView,
+  KeyboardAvoidingView,
+  ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -26,32 +25,36 @@ const MainScreen = ({ onInputNumber }) => {
   };
 
   return (
-    <Card>
-      <Header>Enter your Choice</Header>
-      <TextInput
-        style={styles.textInput}
-        keyboardType="number-pad"
-        autoCapitalize="none"
-        autoCorrect={false}
-        maxLength={2}
-        value={enteredText}
-        onChangeText={setEnteredText}
-      />
-      <View style={styles.buttonsContainer}>
-        <View style={styles.button}>
-          <CustomButton
-            onPress={() => {
-              setEnteredText("");
-            }}
-          >
-            RESET
-          </CustomButton>
-        </View>
-        <View style={styles.button}>
-          <CustomButton onPress={inputParamValidation}>ADD ON</CustomButton>
-        </View>
-      </View>
-    </Card>
+    <ScrollView style={{ flex: 1 }}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
+        <Card>
+          <Header>Enter your Choice</Header>
+          <TextInput
+            style={styles.textInput}
+            keyboardType="number-pad"
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={2}
+            value={enteredText}
+            onChangeText={setEnteredText}
+          />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.button}>
+              <CustomButton
+                onPress={() => {
+                  setEnteredText("");
+                }}
+              >
+                RESET
+              </CustomButton>
+            </View>
+            <View style={styles.button}>
+              <CustomButton onPress={inputParamValidation}>ADD ON</CustomButton>
+            </View>
+          </View>
+        </Card>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
