@@ -1,8 +1,10 @@
-import { useEffect, useLayoutEffect } from "react";
-import { FlatList } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useLayoutEffect, useState } from "react";
+import { FlatList, Pressable } from "react-native";
 import { MEALS } from "../data/dummy-data";
 import MealDetailsItem from "../components/MealDetailsItem";
+import { Entypo } from "@expo/vector-icons";
+import React from "react";
+import { OrderContext } from "../App";
 
 function renderMealDetailsItem(itemData) {
   const item = itemData.item;
@@ -19,14 +21,37 @@ function renderMealDetailsItem(itemData) {
   return <MealDetailsItem {...mealDetailsItemProps} />;
 }
 
-function MealsDetails() {
-  const route = useRoute();
-  const navigation = useNavigation();
+function MealsDetails({ route, navigation }) {
+  const [saved, setSaved] = useState(false);
+  const value = React.useContext(OrderContext);
+  let savedValues = value.map((item) => item.id);
+
+  function starHandler() {
+    setSaved(false);
+    route.params.onDestar(route.params.id);
+  }
+
+  function deStarHandler() {
+    setSaved(true);
+    route.params.onStar(route.params.id);
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: route.params.name ? route.params.name : " ",
+      headerRight: () =>
+        savedValues && savedValues.includes(route.params.id) ? (
+          <Pressable onPress={starHandler}>
+            <Entypo name="star" size={24} color="black" />
+          </Pressable>
+        ) : (
+          <Pressable onPress={deStarHandler}>
+            <Entypo name="star-outlined" size={24} color="black" />
+          </Pressable>
+        ),
     });
-  }, [navigation]);
+  }, [navigation, saved, starHandler, deStarHandler]);
+
   const mealId = route.params.id ? route.params.id : " ";
   const filteredMeal = MEALS.filter((items) => items.id === mealId);
   return (
