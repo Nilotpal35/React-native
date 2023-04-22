@@ -1,24 +1,8 @@
-import { useEffect, useLayoutEffect } from "react";
-import { FlatList } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useLayoutEffect } from "react";
 import { MEALS } from "../data/dummy-data";
-import MealPreviewItem from "../components/MealPreviewItem";
+import MealDetail from "../components/mealDetail";
 
-function mealsPreviewGridTile(itemData) {
-  const item = itemData.item;
-  const mealsPreviewItems = {
-    title: item.title,
-    imageUrl: item.imageUrl,
-    id: item.id,
-  };
-
-  return <MealPreviewItem {...mealsPreviewItems} />;
-}
-
-const MealsPreview = ({}) => {
-  const route = useRoute();
-  const navigation = useNavigation();
-
+const MealsPreview = ({ route, navigation }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: route.params.name ? route.params.name : " ",
@@ -32,13 +16,7 @@ const MealsPreview = ({}) => {
       ) >= 0
     );
   });
-  return (
-    <FlatList
-      data={filteredMeals}
-      keyExtractor={(item) => item.id}
-      renderItem={mealsPreviewGridTile}
-    />
-  );
+  return <MealDetail filteredMeals={filteredMeals} />;
 };
 
 export default MealsPreview;

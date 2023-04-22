@@ -1,43 +1,49 @@
 import { StatusBar } from "expo-status-bar";
-import CategoriesScreen from "./screens/CategoriesScreen";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MealsPreview from "./screens/MealsPreview";
-import MealsDetails from "./screens/MealsDetails";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Home from "./Tab/Home";
+import Fav from "./Tab/Fav";
+import { Ionicons } from "@expo/vector-icons";
+import FavoriteContextProvider from "./store/context/order-context";
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <>
       <StatusBar style="auto" />
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: "#cccccc" },
-            headerTintColor: "black",
-            contentStyle: { backgroundColor: "#0C708B" },
-          }}
-        >
-          <Stack.Screen
-            name="Meals Catagories"
-            component={CategoriesScreen}
-            options={{
-              title: "Meals",
-              headerBackTitleVisible: false,
+      <FavoriteContextProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={{
+              tabBarActiveTintColor: "black",
+              tabBarStyle: { backgroundColor: "#cccccc" },
             }}
-          />
-          <Stack.Screen
-            name="Meals Preview View"
-            component={MealsPreview}
-            options={{
-              title: "Preview",
-              headerBackTitleVisible: false,
-            }}
-          />
-          <Stack.Screen name="Meals Details View" component={MealsDetails} />
-        </Stack.Navigator>
-      </NavigationContainer>
+            sceneContainerStyle={{ backgroundColor: "#0C708B" }}
+          >
+            <Tab.Screen
+              name="Home"
+              component={Home}
+              options={(route, navigation) => ({
+                headerShown: false,
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="home" color={color} size={size} />
+                ),
+              })}
+            />
+            <Tab.Screen
+              name="Fav"
+              component={Fav}
+              options={{
+                headerStyle: { backgroundColor: "#cccccc" },
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="star" color={color} size={size} />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </FavoriteContextProvider>
     </>
   );
 }
