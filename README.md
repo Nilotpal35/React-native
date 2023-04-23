@@ -1,3 +1,5 @@
 # Practise
 
-In this code you will find a more defined structured way of using Context API.
+I am using react-redux and reduxjs/tookit for app wide state management in this code.
+
+
