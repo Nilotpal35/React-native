@@ -5,6 +5,8 @@ import { MEALS } from "../data/dummy-data";
 import MealDetailsItem from "../components/MealDetailsItem";
 import { Ionicons } from "@expo/vector-icons";
 import { FavoriteContext } from "../store/context/order-context";
+import { useDispatch, useSelector } from "react-redux";
+import { removeFavorite , addFavorite} from "../store/redux/favoriteMealsSlice";
 
 function renderMealDetailsItem(itemData) {
   const item = itemData.item;
@@ -24,14 +26,16 @@ function renderMealDetailsItem(itemData) {
 function MealsDetails() {
   const route = useRoute();
   const navigation = useNavigation();
-  const favoriteMealsCtx = React.useContext(FavoriteContext);
-  const containes = favoriteMealsCtx.id.includes(route.params.id);
+  //const favoriteMealsCtx = React.useContext(FavoriteContext);
+  const favoriteMeals = useSelector(state => state.favoriteMeals.id)
+  const dispatch = useDispatch();
+  const containes = favoriteMeals.includes(route.params.id);
 
   const favoriteHandler = () => {
     if (containes) {
-      favoriteMealsCtx.removeFavorite(route.params.id);
+      dispatch(removeFavorite({id : route.params.id}));
     } else {
-      favoriteMealsCtx.addFavorite(route.params.id);
+      dispatch(addFavorite({id : route.params.id}));
     }
   };
 

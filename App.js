@@ -4,7 +4,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "./Tab/Home";
 import Fav from "./Tab/Fav";
 import { Ionicons } from "@expo/vector-icons";
-import FavoriteContextProvider from "./store/context/order-context";
+//import FavoriteContextProvider from "./store/context/order-context";
+import { Provider } from "react-redux";
+import store from './store/redux/store';
 
 const Tab = createBottomTabNavigator();
 
@@ -12,7 +14,8 @@ export default function App() {
   return (
     <>
       <StatusBar style="auto" />
-      <FavoriteContextProvider>
+      {/* <FavoriteContextProvider> */}
+      <Provider store={store}>
         <NavigationContainer>
           <Tab.Navigator
             screenOptions={{
@@ -43,7 +46,8 @@ export default function App() {
             />
           </Tab.Navigator>
         </NavigationContainer>
-      </FavoriteContextProvider>
+      {/* </FavoriteContextProvider> */}
+      </Provider>
     </>
   );
 }
