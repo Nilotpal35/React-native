@@ -2,28 +2,20 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   StyleSheet,
-  Modal,
   View,
-  Text,
-  Pressable,
-  TextInput,
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { removePost, editPost } from "../Store/redux/postSlice";
 import { Colors } from "../Styles/Colors";
 import Form from "../components/Post/Form";
-import { useSelector } from "react-redux";
 
 function EditPostModal({ route, navigation }) {
   const [editTitle, setEditTitle] = useState(route.params?.title);
   const [editAuthor, setEditAuthor] = useState(route.params?.author);
   const [editComment, setEditComment] = useState(route.params?.comment);
   const dispatch = useDispatch();
-
-  const marginTop = useSelector((state) => state.margin.marginTop);
-
   function buttonHandler() {
     if (
       editTitle.length < 3 ||
@@ -58,6 +50,14 @@ function EditPostModal({ route, navigation }) {
       <View style={styles.modalContainer}>
         <View>
           <View style={styles.headerButtonContainer}>
+            <Ionicons
+              name="arrow-back"
+              color={Colors.primary600}
+              size={30}
+              onPress={() => {
+                navigation.goBack();
+              }}
+            />
             <MaterialIcons
               name="delete"
               color={Colors.primary600}
@@ -68,9 +68,9 @@ function EditPostModal({ route, navigation }) {
               }}
             />
           </View>
-          <KeyboardAvoidingView behavior="position">
+          <KeyboardAvoidingView behavior="padding">
             <ScrollView>
-              <View style={[styles.formContainer, { marginTop: marginTop }]}>
+              <View style={[styles.formContainer]}>
                 <Form {...data} />
               </View>
             </ScrollView>
@@ -88,13 +88,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerButtonContainer: {
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     margin: 20,
     flexDirection: "row",
   },
   formContainer: {
+    //flex: 1,
     alignItems: "center",
     marginHorizontal: 10,
     backgroundColor: "#CC95DF",
+    marginBottom: 100,
   },
 });

@@ -21,7 +21,7 @@ function Emoji({ id, emoji }) {
             pressed ? { opacity: 0.35, overflow: "hidden" } : null
           }
           onPress={(e) => {
-            dispatch(addEmoji({ like: "like", id: id }));
+            dispatch(addEmoji({ emoji: "like", id: id }));
           }}
         >
           <View style={{ flexDirection: "row" }}>
@@ -36,7 +36,7 @@ function Emoji({ id, emoji }) {
             pressed ? { opacity: 0.35, overflow: "hidden" } : null
           }
           onPress={(e) => {
-            dispatch(addEmoji({ like: "dislike", id: id }));
+            dispatch(addEmoji({ emoji: "dislike", id: id }));
           }}
         >
           <View style={{ flexDirection: "row" }}>
@@ -57,7 +57,7 @@ function Emoji({ id, emoji }) {
             pressed ? { opacity: 0.35, overflow: "hidden" } : null
           }
           onPress={(e) => {
-            dispatch(addEmoji({ like: "heart", id: id }));
+            dispatch(addEmoji({ emoji: "heart", id: id }));
           }}
         >
           <View style={{ flexDirection: "row" }}>
@@ -72,7 +72,7 @@ function Emoji({ id, emoji }) {
             pressed ? { opacity: 0.35, overflow: "hidden" } : null
           }
           onPress={(e) => {
-            dispatch(addEmoji({ like: "comment", id: id }));
+            dispatch(addEmoji({ emoji: "comment", id: id }));
           }}
         >
           <View style={{ flexDirection: "row" }}>

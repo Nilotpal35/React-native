@@ -53,7 +53,7 @@ const postSlice = createSlice({
       }
     },
     addEmoji: (state, action) => {
-      const updatedEmoji = action.payload.like;
+      const updatedEmoji = action.payload.emoji;
       const index = state.posts.findIndex(
         (item) => item.id === action.payload.id
       );
