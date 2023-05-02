@@ -16,9 +16,5 @@ Done.
 
 Thanks
 
-https://snack.expo.dev/@nilotpal/577f51?platform=ios
 
-https://snack.expo.dev/?platform=android&name=Hello%20World&dependencies=react-navigation%40%5E4.0.10%2Creact-navigation-tabs%40%5E2.5.6%2Creact-navigation-stack%40%5E1.10.3%2Creact-navigation-drawer%40%5E2.3.3&sourceUrl=https%3A%2F%2Freactnavigation.org%2Fexamples%2F4.x%2Fhello-react-navigation.js
-
-
-https://snack.expo.dev/@nilotpal/577f51?platform=ios
+Have a look into this app by clicking this link : https://snack.expo.dev/@nilotpal/577f51?platform=ios
