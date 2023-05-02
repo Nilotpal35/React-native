@@ -15,3 +15,7 @@ and then scan the QR code using scanner in Iphone or Expo Go scanner for android
 Done.
 
 Thanks
+
+
+<div data-snack-id="-Yj5AWzWP" data-snack-platform="web" data-snack-preview="true" data-snack-theme="dark" style="overflow:hidden;background:#212121;border:1px solid var(--color-border);border-radius:4px;height:505px;width:100%"></div>
+<script async src="https://snack.expo.dev/embed.js"></script>
