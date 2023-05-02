@@ -10,49 +10,77 @@ import {
   Alert,
 } from "react-native";
 import { Colors } from "../../Colors/Colors";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { addExpense, updateExpense } from "../../Store/Redux/ExpensesSlice";
 import { useNavigation } from "@react-navigation/native";
+import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
+import { sendExpense } from "../../util/mutation";
 
-function ExpenseForm(props) {
-  const [title, setTitle] = useState(props.value?.title || "");
-  const [amount, setAmount] = useState(props.value?.amount.toString() || "");
-  const [description, setDescription] = useState(
-    props.value?.description || ""
-  );
+function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
+  const [title, setTitle] = useState(titles);
+  const [amount, setAmount] = useState(amounts.toString());
+  const [date, setDate] = useState(dates);
+  const [description, setDescription] = useState(descriptions);
+  const [inputValidate, setInputValidate] = useState({
+    title: true,
+    amount: true,
+    date: true,
+    description: true,
+  });
+
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const { height, width } = useWindowDimensions();
 
-  const dispatch = useDispatch();
+  const screenModeCtx = useContext(ScreenMode);
+  const MODE = screenModeCtx.mode;
+
+  useEffect(() => {
+    setInputValidate({
+      title: title.trim().length > 3,
+      description: description.trim().length > 3,
+      amount: !isNaN(+amount) && +amount > 0,
+      date: date.length === 10,
+    });
+  }, [title, amount, description, date]);
 
   function buttonhandler() {
     if (
-      title.length > 3 &&
-      !isNaN(parseInt(amount)) &&
-      parseInt(amount) > 0 &&
-      description.length > 5
+      inputValidate.amount &&
+      inputValidate.title &&
+      inputValidate.date &&
+      inputValidate.description
     ) {
       const exportItem = {
-        id: props.value ? props.value.id : nanoid(),
+        id: ids ? ids : nanoid(),
         title: title,
         amount: parseFloat(amount),
+        date: date,
         description: description,
       };
-      if (props.value) {
-        console.log("NEW VALUE", exportItem);
-        dispatch(updateExpense({ expense: exportItem }));
-        navigation.goBack();
-      } else {
+      const fireBaseItem = {
+        title: title,
+        amount: parseFloat(amount),
+        date: date,
+        description: description,
+      };
+      if (state === "ADD") {
         dispatch(addExpense({ newExpense: exportItem }));
+        sendExpense(fireBaseItem);
+        navigation.goBack();
+      } else if (state === "EDIT") {
+        dispatch(updateExpense({ expense: exportItem }));
         navigation.goBack();
       }
     } else {
-      Alert.alert("Warning", "please fill all the fields!");
+      Alert.alert("Warning!", `Correct the fields!`);
       return;
     }
   }
+
+  const BTN_COLOR = MODE === "LIGHT" ? Colors.pinkish500 : Colors.primary500;
 
   return (
     <KeyboardAvoidingView behavior="padding">
@@ -65,9 +93,13 @@ function ExpenseForm(props) {
                 placeholder="Title"
                 value={title}
                 onChangeText={setTitle}
-                style={styles.titleInput}
+                style={[
+                  styles.titleInput,
+                  { borderWidth: inputValidate.title ? 0 : 2 },
+                ]}
                 autoCorrect={false}
                 keyboardAppearance="dark"
+                maxLength={15}
               />
             </View>
           </View>
@@ -78,8 +110,30 @@ function ExpenseForm(props) {
                 placeholder="Amount"
                 value={amount}
                 onChangeText={setAmount}
-                style={styles.titleInput}
+                style={[
+                  styles.titleInput,
+                  { borderWidth: inputValidate.amount ? 0 : 2 },
+                ]}
                 keyboardAppearance="dark"
+                keyboardType="decimal-pad"
+                maxLength={6}
+              />
+            </View>
+          </View>
+          <View style={{ width: width - 90 }}>
+            <Text style={styles.text}>Date:</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="YYYY-MM-DD"
+                value={date}
+                onChangeText={setDate}
+                style={[
+                  styles.titleInput,
+                  { borderWidth: inputValidate.date ? 0 : 2 },
+                ]}
+                keyboardAppearance="dark"
+                //keyboardType="numbers-and-punctuation"
+                maxLength={10}
               />
             </View>
           </View>
@@ -91,16 +145,36 @@ function ExpenseForm(props) {
                 placeholder="Write here ...."
                 value={description}
                 onChangeText={setDescription}
-                style={styles.postInput}
+                style={[
+                  styles.postInput,
+                  { borderWidth: inputValidate.description ? 0 : 2 },
+                ]}
                 multiline
-                maxLength={1000}
+                maxLength={100}
                 keyboardAppearance="dark"
+                textAlign="left"
               />
+              <Text
+                style={[
+                  styles.lengthIndicator,
+                  {
+                    color: description.length < 100 ? Colors.primary700 : "red",
+                  },
+                ]}
+              >
+                {description.length}/100
+              </Text>
             </View>
           </View>
           <Pressable
             style={({ pressed }) =>
-              pressed ? [styles.button, { opacity: 0.5 }] : styles.button
+              pressed
+                ? [
+                    styles.button,
+                    { backgroundColor: BTN_COLOR },
+                    { opacity: 0.5 },
+                  ]
+                : [styles.button, { backgroundColor: BTN_COLOR }]
             }
             onPress={buttonhandler}
           >
@@ -131,10 +205,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     color: Colors.primary700,
+    borderColor: "red",
   },
   postInput: {
-    height: 150,
-    padding: 10,
+    height: 120,
+    padding: 15,
     borderColor: "#9915C6",
     fontSize: 18,
     borderRadius: 3,
@@ -145,6 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     color: Colors.primary700,
+    borderColor: "red",
   },
   inputContainer: {
     marginVertical: 20,
@@ -155,7 +231,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   button: {
-    backgroundColor: Colors.primary600,
+    //backgroundColor: Colors.reddish500,
     padding: 15,
     borderRadius: 7,
     marginBottom: 20,
@@ -164,5 +240,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
     color: Colors.primary700,
+  },
+  lengthIndicator: {
+    textAlign: "right",
+    margin: 5,
   },
 });

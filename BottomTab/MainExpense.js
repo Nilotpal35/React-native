@@ -3,17 +3,28 @@ import AllExpenses from "../Screens/AllExpenses";
 import RecentExpenses from "../Screens/RecentExpenses";
 import { Colors } from "../Colors/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable } from "react-native";
+import { Pressable, StyleSheet, Switch, View } from "react-native";
+import { useContext, useState } from "react";
+import { ScreenMode } from "../Store/Context/ScreenModeCtx";
 
 const Tab = createBottomTabNavigator();
 
 function MainExpense() {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const screenModeCtx = useContext(ScreenMode);
+  const MODE = screenModeCtx.mode;
   return (
     <Tab.Navigator
       screenOptions={({ route, navigation }) => ({
-        headerStyle: { backgroundColor: Colors.primary600 },
+        headerStyle: {
+          backgroundColor:
+            MODE === "LIGHT" ? Colors.reddish500 : Colors.primary700,
+        },
         headerTintColor: Colors.white,
-        tabBarStyle: { backgroundColor: Colors.primary600 },
+        tabBarStyle: {
+          backgroundColor:
+            MODE === "LIGHT" ? Colors.reddish500 : Colors.primary700,
+        },
         tabBarActiveTintColor: Colors.white,
         headerRight: () => (
           <Pressable
@@ -33,6 +44,20 @@ function MainExpense() {
               }}
             />
           </Pressable>
+        ),
+        headerLeft: () => (
+          <View style={styles.toogleSwitch}>
+            <Switch
+              trackColor={{ false: Colors.primary700, true: Colors.reddish400 }}
+              thumbColor={isEnabled ? Colors.primary700 : Colors.reddish400}
+              ios_backgroundColor={Colors.primary700}
+              onValueChange={() => setIsEnabled(!isEnabled)}
+              onChange={() =>
+                screenModeCtx.switchMode(isEnabled ? "LIGHT" : "DARK")
+              }
+              value={isEnabled}
+            />
+          </View>
         ),
       })}
     >
@@ -59,3 +84,9 @@ function MainExpense() {
 }
 
 export default MainExpense;
+
+const styles = StyleSheet.create({
+  toogleSwitch: {
+    marginLeft: 10,
+  },
+});

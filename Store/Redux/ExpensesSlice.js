@@ -1,21 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  expenses: [
-    {
-      id: "c1",
-      title: "A book",
-      amount: 21.22,
-      description:
-        "Book is comprised of information which we need to improve human being",
-    },
-    {
-      id: "c2",
-      title: "A Toy",
-      amount: 15.52,
-      description: "Toy is comprised of information which we need for fun",
-    },
-  ],
+  expenses: [],
 };
 
 const ExpensesSlice = createSlice({
@@ -23,9 +9,11 @@ const ExpensesSlice = createSlice({
   initialState,
   reducers: {
     addExpense: (state, action) => {
-      console.log("ADD EXPENSE SLICE", action.payload.newExpense);
-      //state.expenses.push(action.payload.newExpense);
-      state.expenses = [action.payload.newExpense, ...state.expenses];
+      state.expenses.push(action.payload.newExpense);
+    },
+    setExpense: (state, action) => {
+      console.log("SET EXPENSE");
+      state.expenses = action.payload.expenses;
     },
     removeExpense: (state, action) => {
       state.expenses = state.expenses.filter(
@@ -40,13 +28,14 @@ const ExpensesSlice = createSlice({
       if (index !== -1) {
         state.expenses[index].title = updatedExpense.title;
         state.expenses[index].amount = updatedExpense.amount;
+        state.expenses[index].date = updatedExpense.date;
         state.expenses[index].description = updatedExpense.description;
       }
     },
   },
 });
 
-export const { addExpense, removeExpense, updateExpense } =
+export const { addExpense, setExpense, removeExpense, updateExpense } =
   ExpensesSlice.actions;
 
 export default ExpensesSlice.reducer;

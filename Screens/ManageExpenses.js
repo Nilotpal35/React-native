@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { Text, View } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,8 +6,13 @@ import { Colors } from "../Colors/Colors";
 import ExpenseForm from "../Components/Form/ExpenseForm";
 import { useDispatch } from "react-redux";
 import { removeExpense } from "../Store/Redux/ExpensesSlice";
+import { ScreenMode } from "../Store/Context/ScreenModeCtx";
 
 function ManageExpenses({ route, navigation }) {
+  const PARAMS_VALUE = route.params?.value;
+  const PARAMS_STATE = route.params?.mode;
+  const screenModeCtx = useContext(ScreenMode);
+  const MODE = screenModeCtx.mode;
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     if (route.params.mode === "EDIT") {
@@ -17,7 +22,6 @@ function ManageExpenses({ route, navigation }) {
           <Pressable
             style={({ pressed }) => (pressed ? { opacity: 0.5 } : null)}
             onPress={() => {
-              console.log("ID", route.params.value.id);
               dispatch(removeExpense({ id: route.params.value.id }));
               navigation.goBack();
             }}
@@ -25,17 +29,42 @@ function ManageExpenses({ route, navigation }) {
             <Ionicons name="ios-trash" color={Colors.white} size={24} />
           </Pressable>
         ),
+        headerStyle: {
+          backgroundColor:
+            MODE === "LIGHT" ? Colors.pinkish500 : Colors.primary700,
+        },
       });
     } else {
-      navigation.setOptions({ title: "ADD EXPENSE" });
+      navigation.setOptions({
+        title: "ADD EXPENSE",
+        headerStyle: {
+          backgroundColor:
+            MODE === "LIGHT" ? Colors.pinkish500 : Colors.primary700,
+        },
+      });
     }
-  }, []);
-  let screen = <ExpenseForm state="NEW" />;
+  }, [navigation, route.params, dispatch, MODE]);
+
+  const initialFormValue = {
+    ids: PARAMS_VALUE ? PARAMS_VALUE.id : "",
+    titles: PARAMS_VALUE ? PARAMS_VALUE.title : "",
+    amounts: PARAMS_VALUE ? PARAMS_VALUE.amount : "",
+    dates: PARAMS_VALUE ? PARAMS_VALUE.date : "",
+    descriptions: PARAMS_VALUE ? PARAMS_VALUE.description : "",
+    state: PARAMS_STATE,
+  };
+  let screen = <ExpenseForm {...initialFormValue} />;
   if (route.params.mode === "EDIT") {
-    screen = <ExpenseForm value={route.params.value} state="OLD" />;
+    screen = <ExpenseForm {...initialFormValue} />;
   }
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.primary100 }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor:
+          MODE === "LIGHT" ? Colors.accent200 : Colors.primary100,
+      }}
+    >
       {screen}
     </View>
   );
