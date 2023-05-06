@@ -13,7 +13,6 @@ const ExpensesSlice = createSlice({
     },
     setExpense: (state, action) => {
       state.expenses = action.payload.expenses;
-      state.expenses = state.expenses.reverse();
     },
     removeExpense: (state, action) => {
       state.expenses = state.expenses.filter(
