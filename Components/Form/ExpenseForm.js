@@ -26,7 +26,7 @@ import ErrorModal from "../UI/ErrorModal";
 
 function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const [errorMsg, setErrorMsg] = useState();
   const [showCalendar, setShowCalender] = useState(false);
   const [title, setTitle] = useState(titles);
   const [amount, setAmount] = useState(amounts.toString());
@@ -75,12 +75,16 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
           dispatch(addExpense({ newExpense: { ...fireBaseItem, id: id } }));
           navigation.goBack();
         } catch (error) {
-          setError("Some issue in Saving");
+          setErrorMsg("Some issue in Saving...");
         }
       } else if (state === "EDIT") {
-        await mutateExpense(ids, fireBaseItem);
-        dispatch(updateExpense({ expense: { ...fireBaseItem, id: ids } }));
-        navigation.goBack();
+        try {
+          await mutateExpense(ids, fireBaseItem);
+          dispatch(updateExpense({ expense: { ...fireBaseItem, id: ids } }));
+          navigation.goBack();
+        } catch (error) {
+          setErrorMsg("Some issue in Updating...");
+        }
       }
       setIsLoading(false);
     } else {
@@ -95,8 +99,8 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
     return <LoadingIndicator />;
   }
 
-  if (error && !isLoading) {
-    Alert.alert("Error", `${error}`, [
+  if (errorMsg && !isLoading) {
+    Alert.alert("Error", `${errorMsg}`, [
       { style: "destructive", text: "Go Back", onPress: setError(null) },
     ]);
     //return <ErrorModal error={error} errorHandler={errorHandler} />;
