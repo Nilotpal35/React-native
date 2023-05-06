@@ -11,14 +11,23 @@ import {
 } from "react-native";
 import { Colors } from "../../Colors/Colors";
 import { useContext, useEffect, useState } from "react";
-import { nanoid } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import { addExpense, updateExpense } from "../../Store/Redux/ExpensesSlice";
+import {
+  addExpense,
+  setExpense,
+  updateExpense,
+} from "../../Store/Redux/ExpensesSlice";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
-import { sendExpense } from "../../util/mutation";
+import { mutateExpense, sendExpense } from "../../util/mutation";
+import DatePickerComponent from "../UI/DatePickerComponent";
+import LoadingIndicator from "../UI/LoadingIndicator";
+import ErrorModal from "../UI/ErrorModal";
 
 function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+  const [showCalendar, setShowCalender] = useState(false);
   const [title, setTitle] = useState(titles);
   const [amount, setAmount] = useState(amounts.toString());
   const [date, setDate] = useState(dates);
@@ -46,34 +55,34 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
     });
   }, [title, amount, description, date]);
 
-  function buttonhandler() {
+  async function buttonhandler() {
     if (
       inputValidate.amount &&
       inputValidate.title &&
       inputValidate.date &&
       inputValidate.description
     ) {
-      const exportItem = {
-        id: ids ? ids : nanoid(),
-        title: title,
-        amount: parseFloat(amount),
-        date: date,
-        description: description,
-      };
       const fireBaseItem = {
         title: title,
         amount: parseFloat(amount),
         date: date,
         description: description,
       };
+      setIsLoading(true);
       if (state === "ADD") {
-        dispatch(addExpense({ newExpense: exportItem }));
-        sendExpense(fireBaseItem);
-        navigation.goBack();
+        try {
+          const id = await sendExpense(fireBaseItem);
+          dispatch(addExpense({ newExpense: { ...fireBaseItem, id: id } }));
+          navigation.goBack();
+        } catch (error) {
+          setError("Some issue in Saving");
+        }
       } else if (state === "EDIT") {
-        dispatch(updateExpense({ expense: exportItem }));
+        await mutateExpense(ids, fireBaseItem);
+        dispatch(updateExpense({ expense: { ...fireBaseItem, id: ids } }));
         navigation.goBack();
       }
+      setIsLoading(false);
     } else {
       Alert.alert("Warning!", `Correct the fields!`);
       return;
@@ -81,6 +90,17 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
   }
 
   const BTN_COLOR = MODE === "LIGHT" ? Colors.pinkish500 : Colors.primary500;
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
+  if (error && !isLoading) {
+    Alert.alert("Error", `${error}`, [
+      { style: "destructive", text: "Go Back", onPress: setError(null) },
+    ]);
+    //return <ErrorModal error={error} errorHandler={errorHandler} />;
+  }
 
   return (
     <KeyboardAvoidingView behavior="padding">
@@ -124,9 +144,9 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
             <Text style={styles.text}>Date:</Text>
             <View style={styles.inputContainer}>
               <TextInput
-                placeholder="YYYY-MM-DD"
+                placeholder="YYYY/MM/DD"
                 value={date}
-                onChangeText={setDate}
+                onPressIn={() => setShowCalender(!showCalendar)}
                 style={[
                   styles.titleInput,
                   { borderWidth: inputValidate.date ? 0 : 2 },
@@ -136,6 +156,11 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
                 maxLength={10}
               />
             </View>
+            <DatePickerComponent
+              mode="calendar"
+              showCalendar={showCalendar}
+              setDate={setDate}
+            />
           </View>
 
           <View style={{ width: width - 90 }}>

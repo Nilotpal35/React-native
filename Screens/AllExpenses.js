@@ -1,32 +1,24 @@
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
   useWindowDimensions,
+  Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import ExpenseItemGridTile from "../Components/UI/ExpenseItemGridTile";
 import { Colors } from "../Colors/Colors";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { ScreenMode } from "../Store/Context/ScreenModeCtx";
 import { getExpenses } from "../util/mutation";
 import { setExpense } from "../Store/Redux/ExpensesSlice";
-
-function renderExpenseItem(itemData) {
-  const item = {
-    id: itemData.item.id,
-    title: itemData.item.title,
-    amount: itemData.item.amount,
-    date: itemData.item.date,
-    description: itemData.item.description,
-  };
-  return <ExpenseItemGridTile {...item} />;
-}
+import StickeyHeader from "../Components/UI/StickeyHeader";
+import ExpensesList from "../Components/UI/ExpensesList";
+import LoadingIndicator from "../Components/UI/LoadingIndicator";
 
 function AllExpenses() {
+  const [errorMsg, setErrorMsg] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const Expenses = useSelector((state) => state.expenses.expenses);
-  console.log("state EXPENSES", Expenses);
   const screenModeCtx = useContext(ScreenMode);
   const MODE = screenModeCtx.mode;
   const { height, width } = useWindowDimensions();
@@ -34,17 +26,31 @@ function AllExpenses() {
 
   useEffect(() => {
     async function fetchExpense() {
-      const response = await getExpenses();
-      console.log("RESPONSE", response);
-      dispatch(setExpense({ expenses: response }));
+      setIsLoading(true);
+      try {
+        const response = await getExpenses();
+        dispatch(setExpense({ expenses: response }));
+      } catch (error) {
+        setErrorMsg("Some issue in Fetching...");
+      }
+      setIsLoading(false);
     }
     fetchExpense();
   }, []);
 
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
+  if (errorMsg && !isLoading) {
+    Alert.alert("Error!", `${errorMsg}`, [
+      { style: "destructive", text: "Go back", onPress: setErrorMsg(null) },
+    ]);
+  }
+
   const finalAmount = Expenses.reduce((sum, item) => {
     return (sum += item.amount);
   }, 0);
-  //const finalAmount = 55;
 
   return (
     <View
@@ -56,36 +62,20 @@ function AllExpenses() {
         },
       ]}
     >
-      <View
-        style={[
-          styles.sumContainer,
-          {
-            backgroundColor:
-              MODE === "LIGHT" ? Colors.reddish400 : Colors.primary300,
-          },
-        ]}
-      >
-        <View style={styles.total}>
-          <Text style={styles.amountText}>Total Amount</Text>
-        </View>
-        <View
-          style={[
-            styles.amount,
-            {
-              width: width > 400 ? 200 : 170,
-              backgroundColor:
-                MODE === "LIGHT" ? Colors.reddish500 : Colors.primary600,
-            },
-          ]}
-        >
-          <Text style={styles.amountValue}>${finalAmount.toFixed(2)}</Text>
-        </View>
-      </View>
-      <FlatList
-        data={Expenses}
-        keyExtractor={(item) => item.id}
-        renderItem={(itemData) => renderExpenseItem(itemData)}
+      <StickeyHeader
+        text="Total Amount"
+        finalAmount={finalAmount}
+        MODE={MODE}
+        styles={styles}
+        width={width}
       />
+      {Expenses.length > 0 ? (
+        <ExpensesList Expenses={Expenses} />
+      ) : (
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>Expenses List Empty!!</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -95,10 +85,8 @@ export default AllExpenses;
 const styles = StyleSheet.create({
   flatViewCotainer: {
     flex: 1,
-    //backgroundColor: Colors.lightGrey,
   },
   sumContainer: {
-    //backgroundColor: Colors.accent500,
     minHeight: 40,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -118,16 +106,24 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
   amount: {
-    //backgroundColor: Colors.accent800,
     minHeight: 38,
     alignItems: "center",
     justifyContent: "center",
-    //width: 200,
     borderRadius: 5,
   },
   amountValue: {
     fontSize: 17,
     fontWeight: "bold",
     color: Colors.white,
+  },
+  text: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  textContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

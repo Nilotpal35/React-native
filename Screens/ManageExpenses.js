@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,8 +7,11 @@ import ExpenseForm from "../Components/Form/ExpenseForm";
 import { useDispatch } from "react-redux";
 import { removeExpense } from "../Store/Redux/ExpensesSlice";
 import { ScreenMode } from "../Store/Context/ScreenModeCtx";
+import { deleteExpense } from "../util/mutation";
+import LoadingIndicator from "../Components/UI/LoadingIndicator";
 
 function ManageExpenses({ route, navigation }) {
+  const [isLoading, setIsLoading] = useState(false);
   const PARAMS_VALUE = route.params?.value;
   const PARAMS_STATE = route.params?.mode;
   const screenModeCtx = useContext(ScreenMode);
@@ -21,7 +24,9 @@ function ManageExpenses({ route, navigation }) {
         headerRight: ({ color, size }) => (
           <Pressable
             style={({ pressed }) => (pressed ? { opacity: 0.5 } : null)}
-            onPress={() => {
+            onPress={async () => {
+              setIsLoading(true);
+              await deleteExpense(route.params.value.id);
               dispatch(removeExpense({ id: route.params.value.id }));
               navigation.goBack();
             }}
@@ -44,6 +49,10 @@ function ManageExpenses({ route, navigation }) {
       });
     }
   }, [navigation, route.params, dispatch, MODE]);
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
 
   const initialFormValue = {
     ids: PARAMS_VALUE ? PARAMS_VALUE.id : "",

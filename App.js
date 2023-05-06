@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MainExpense from "./BottomTab/MainExpense";
+import MainExpense from "./Tab/MainExpense";
 import ManageExpenses from "./Screens/ManageExpenses";
 import { Colors } from "./Colors/Colors";
 import { Provider } from "react-redux";

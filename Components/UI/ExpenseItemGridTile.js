@@ -11,14 +11,6 @@ import { useContext } from "react";
 import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
 
 function ExpenseItemGridTile({ id, title, amount, date, description }) {
-  console.log(
-    "upcoming data for recent ",
-    id,
-    title,
-    amount,
-    date,
-    description
-  );
   const screenModeCtx = useContext(ScreenMode);
   const MODE = screenModeCtx.mode;
   const navigation = useNavigation();

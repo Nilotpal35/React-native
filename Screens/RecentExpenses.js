@@ -1,35 +1,49 @@
 import {
-  Text,
   View,
-  FlatList,
+  Text,
   StyleSheet,
   useWindowDimensions,
+  Alert,
 } from "react-native";
 import { useSelector } from "react-redux";
-import ExpenseItemGridTile from "../Components/UI/ExpenseItemGridTile";
 import { Colors } from "../Colors/Colors";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ScreenMode } from "../Store/Context/ScreenModeCtx";
-
-function renderExpenseItem(itemData) {
-  const item = {
-    id: itemData.item.id,
-    title: itemData.item.title,
-    amount: itemData.item.amount,
-    date: itemData.item.date,
-    description: itemData.item.description,
-  };
-}
+import StickeyHeader from "../Components/UI/StickeyHeader";
+import ExpensesList from "../Components/UI/ExpensesList";
 
 function RecentExpenses() {
   const Expenses = useSelector((state) => state.expenses.expenses);
-  console.log("FINALll EXPENSES", Expenses);
   const screenModeCtx = useContext(ScreenMode);
   const MODE = screenModeCtx.mode;
   const { height, width } = useWindowDimensions();
-  const finalAmount = Expenses.reduce((sum, item) => {
+
+  const finalExpenses = Expenses.map((item) => {
+    const date = item.date.split("/");
+    const finalDate = `${date[0]}-${date[1]}-${date[2]}`;
+    return {
+      ...item,
+      date: finalDate,
+    };
+  })
+    .filter(
+      (item) =>
+        (new Date() - new Date(item.date)) / (1000 * 60 * 60 * 24) > 0 &&
+        (new Date() - new Date(item.date)) / (1000 * 60 * 60 * 24) <= 7
+    )
+    .map((item) => {
+      const date = item.date.split("-");
+      const finalDate = `${date[0]}/${date[1]}/${date[2]}`;
+      return {
+        ...item,
+        date: finalDate,
+      };
+    });
+
+  const finalAmount = finalExpenses.reduce((sum, item) => {
     return (sum += item.amount);
   }, 0);
+
   return (
     <View
       style={[
@@ -40,36 +54,21 @@ function RecentExpenses() {
         },
       ]}
     >
-      <View
-        style={[
-          styles.sumContainer,
-          {
-            backgroundColor:
-              MODE === "LIGHT" ? Colors.reddish400 : Colors.primary300,
-          },
-        ]}
-      >
-        <View style={styles.total}>
-          <Text style={styles.amountText}>Total Amount</Text>
-        </View>
-        <View
-          style={[
-            styles.amount,
-            {
-              width: width > 400 ? 200 : 170,
-              backgroundColor:
-                MODE === "LIGHT" ? Colors.reddish500 : Colors.primary600,
-            },
-          ]}
-        >
-          <Text style={styles.amountValue}>${finalAmount.toFixed(2)}</Text>
-        </View>
-      </View>
-      <FlatList
-        data={Expenses}
-        keyExtractor={(item) => item.id}
-        renderItem={renderExpenseItem}
+      <StickeyHeader
+        text="Last 7 days"
+        finalAmount={finalAmount}
+        MODE={MODE}
+        styles={styles}
+        width={width}
       />
+
+      {finalExpenses.length > 0 ? (
+        <ExpensesList Expenses={finalExpenses} />
+      ) : (
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>Recent Expenses List Empty!!</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -106,12 +105,21 @@ const styles = StyleSheet.create({
     minHeight: 38,
     alignItems: "center",
     justifyContent: "center",
-    //width: 200,
     borderRadius: 5,
   },
   amountValue: {
     fontSize: 17,
     fontWeight: "bold",
     color: Colors.white,
+  },
+  text: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  textContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

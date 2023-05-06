@@ -12,8 +12,8 @@ const ExpensesSlice = createSlice({
       state.expenses.push(action.payload.newExpense);
     },
     setExpense: (state, action) => {
-      console.log("SET EXPENSE");
       state.expenses = action.payload.expenses;
+      state.expenses = state.expenses.reverse();
     },
     removeExpense: (state, action) => {
       state.expenses = state.expenses.filter(
