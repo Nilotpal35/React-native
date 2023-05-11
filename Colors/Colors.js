@@ -19,6 +19,6 @@ export const Colors = {
   pinkish500: "#831694",
   pinkish400: "#831694",
   pinkish100: "#F3C7ED",
-  reddish500: "#B6099E",
-  reddish400: "#E965D7",
+  reddish500: "#B6099E9c",
+  reddish400: "#E965D74c",
 };

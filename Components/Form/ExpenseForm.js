@@ -23,6 +23,7 @@ import { mutateExpense, sendExpense } from "../../util/mutation";
 import DatePickerComponent from "../UI/DatePickerComponent";
 import LoadingIndicator from "../UI/LoadingIndicator";
 import ErrorModal from "../UI/ErrorModal";
+import { AuthContext } from "../../Store/Context/AuthContext";
 
 function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,7 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
   const { height, width } = useWindowDimensions();
 
   const screenModeCtx = useContext(ScreenMode);
+  const authCtx = useContext(AuthContext);
   const MODE = screenModeCtx.mode;
 
   useEffect(() => {
@@ -71,7 +73,7 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
       setIsLoading(true);
       if (state === "ADD") {
         try {
-          const id = await sendExpense(fireBaseItem);
+          const id = await sendExpense(fireBaseItem, authCtx.token);
           dispatch(addExpense({ newExpense: { ...fireBaseItem, id: id } }));
           navigation.goBack();
         } catch (error) {
@@ -79,7 +81,7 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
         }
       } else if (state === "EDIT") {
         try {
-          await mutateExpense(ids, fireBaseItem);
+          await mutateExpense(ids, fireBaseItem, authCtx.token);
           dispatch(updateExpense({ expense: { ...fireBaseItem, id: ids } }));
           navigation.goBack();
         } catch (error) {
@@ -101,7 +103,7 @@ function ExpenseForm({ ids, titles, amounts, dates, descriptions, state }) {
 
   if (errorMsg && !isLoading) {
     Alert.alert("Error", `${errorMsg}`, [
-      { style: "destructive", text: "Go Back", onPress: setError(null) },
+      { style: "destructive", text: "Go Back", onPress: setErrorMsg(null) },
     ]);
     //return <ErrorModal error={error} errorHandler={errorHandler} />;
   }

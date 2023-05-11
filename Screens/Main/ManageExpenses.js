@@ -2,13 +2,14 @@ import { useContext, useLayoutEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "../Colors/Colors";
-import ExpenseForm from "../Components/Form/ExpenseForm";
+import { Colors } from "../../Colors/Colors";
+import ExpenseForm from "../../Components/Form/ExpenseForm";
 import { useDispatch } from "react-redux";
-import { removeExpense } from "../Store/Redux/ExpensesSlice";
-import { ScreenMode } from "../Store/Context/ScreenModeCtx";
-import { deleteExpense } from "../util/mutation";
-import LoadingIndicator from "../Components/UI/LoadingIndicator";
+import { removeExpense } from "../../Store/Redux/ExpensesSlice";
+import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
+import { deleteExpense } from "../../util/mutation";
+import LoadingIndicator from "../../Components/UI/LoadingIndicator";
+import { AuthContext } from "../../Store/Context/AuthContext";
 
 function ManageExpenses({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,7 @@ function ManageExpenses({ route, navigation }) {
   const PARAMS_STATE = route.params?.mode;
   const screenModeCtx = useContext(ScreenMode);
   const MODE = screenModeCtx.mode;
+  const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     if (route.params.mode === "EDIT") {
@@ -26,7 +28,7 @@ function ManageExpenses({ route, navigation }) {
             style={({ pressed }) => (pressed ? { opacity: 0.5 } : null)}
             onPress={async () => {
               setIsLoading(true);
-              await deleteExpense(route.params.value.id);
+              await deleteExpense(route.params.value.id, authCtx.token);
               dispatch(removeExpense({ id: route.params.value.id }));
               navigation.goBack();
             }}

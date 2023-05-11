@@ -6,14 +6,14 @@ import {
   Alert,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { Colors } from "../Colors/Colors";
+import { Colors } from "../../Colors/Colors";
 import { useContext, useEffect, useState } from "react";
-import { ScreenMode } from "../Store/Context/ScreenModeCtx";
-import StickeyHeader from "../Components/UI/StickeyHeader";
-import ExpensesList from "../Components/UI/ExpensesList";
+import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
+import StickeyHeader from "../../Components/UI/StickeyHeader";
+import ExpensesList from "../../Components/UI/ExpensesList";
 
 function RecentExpenses() {
-  const Expenses = useSelector((state) => state.expenses.expenses);
+  const Expenses = useSelector((state) => state.expenses.expenses) || [];
   const screenModeCtx = useContext(ScreenMode);
   const MODE = screenModeCtx.mode;
   const { height, width } = useWindowDimensions();
@@ -48,10 +48,10 @@ function RecentExpenses() {
     <View
       style={[
         styles.flatViewCotainer,
-        {
-          backgroundColor:
-            MODE === "LIGHT" ? Colors.lightGrey : Colors.primary100,
-        },
+        // {
+        //   backgroundColor:
+        //     MODE === "LIGHT" ? Colors.lightGrey : Colors.primary100,
+        // },
       ]}
     >
       <StickeyHeader
@@ -66,7 +66,14 @@ function RecentExpenses() {
         <ExpensesList Expenses={finalExpenses} />
       ) : (
         <View style={styles.textContainer}>
-          <Text style={styles.text}>Recent Expenses List Empty!!</Text>
+          <Text
+            style={[
+              styles.text,
+              { color: MODE === "LIGHT" ? "black" : "white" },
+            ]}
+          >
+            Recent Expenses List Empty!!
+          </Text>
         </View>
       )}
     </View>
@@ -78,7 +85,6 @@ export default RecentExpenses;
 const styles = StyleSheet.create({
   flatViewCotainer: {
     flex: 1,
-    backgroundColor: Colors.primary100,
   },
   sumContainer: {
     backgroundColor: Colors.primary400,
@@ -120,6 +126,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    //justifyContent: "center",
+    marginTop: 10,
   },
 });

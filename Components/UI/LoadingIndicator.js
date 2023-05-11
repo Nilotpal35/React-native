@@ -2,6 +2,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { Colors } from "../../Colors/Colors";
 import { useContext } from "react";
 import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
+import { GlobalColor } from "../../Colors/GlobalStyles";
 
 export default function LoadingIndicator() {
   const screenModeCtx = useContext(ScreenMode);
@@ -12,7 +13,7 @@ export default function LoadingIndicator() {
         styles.container,
         {
           backgroundColor:
-            MODE === "LIGHT" ? Colors.pinkish100 : Colors.primary100,
+            MODE === "LIGHT" ? GlobalColor.lightGrey : Colors.primary100,
         },
       ]}
     >
