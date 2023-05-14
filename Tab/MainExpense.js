@@ -13,6 +13,7 @@ import {
 import { useContext, useState } from "react";
 import { ScreenMode } from "../Store/Context/ScreenModeCtx";
 import { AuthContext } from "../Store/Context/AuthContext";
+import PopUpText from "../Components/UI/ToolBox";
 
 const Tab = createBottomTabNavigator();
 
@@ -104,23 +105,38 @@ function MainExpense() {
               <Ionicons name="calendar" color={color} size={size} />
             ),
             headerRight: ({ tintColor }) => (
-              <Pressable
-                style={({ pressed }) => (pressed ? { opacity: 0.5 } : null)}
-                onPress={() => {
-                  authCtx.logOut();
-                }}
-              >
-                <Ionicons
-                  name="exit-outline"
-                  color={tintColor}
-                  size={30}
-                  style={{
-                    marginHorizontal: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
+              <View style={{ flexDirection: "row" }}>
+                <PopUpText text={`Username : *******`}>
+                  <Ionicons
+                    name="ios-person-circle-outline"
+                    size={28}
+                    color={tintColor}
+                    style={{
+                      marginTop: 1,
+                      //marginRight: 5,
+                      // alignItems: "center",
+                      // justifyContent: "center",
+                    }}
+                  />
+                </PopUpText>
+                <Pressable
+                  style={({ pressed }) => (pressed ? { opacity: 0.5 } : null)}
+                  onPress={() => {
+                    authCtx.logOut();
                   }}
-                />
-              </Pressable>
+                >
+                  <Ionicons
+                    name="exit-outline"
+                    color={tintColor}
+                    size={30}
+                    style={{
+                      marginHorizontal: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  />
+                </Pressable>
+              </View>
             ),
           }}
         />

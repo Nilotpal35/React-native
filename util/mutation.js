@@ -33,7 +33,7 @@ export async function getExpenses(authToken) {
 
       return Expenses;
     } catch (e) {
-      Alert.alert("GET EXPENSE ", e.message);
+      console.log("GET EXPENSE ", e.message);
     }
     return [];
   }

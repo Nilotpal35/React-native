@@ -31,45 +31,8 @@ function AllExpenses() {
   const authCtx = useContext(AuthContext);
 
   useEffect(() => {
-    async function fetchExpense() {
-      setIsLoading(true);
-      try {
-        const response = await getExpenses(authCtx.token);
-        dispatch(setExpense({ expenses: response }));
-      } catch (error) {
-        setErrorMsg("Some issue in Fetching...");
-      }
-      setIsLoading(false);
-    }
-    fetchExpense();
-  }, []);
-
-  // const idToken = authCtx.token;
-  // console.log("ID TOKEN", idToken, authCtx.refreshToken);
-
-  // //Decode the ID token
-  // const decodedToken = jwtDecode(idToken);
-  // console.log("DECODE TOKEN", decodedToken);
-
-  // // Get the expiration time from the decoded token
-  // const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
-
-  // // Check if the token has expired
-  // const isTokenExpired = Date.now() >= expirationTime;
-
-  // if (isTokenExpired) {
-  //   // The token has expired
-  //   console.log("ID TOKEN EXPIRED!");
-  //   const { id_token, refresh_token } = reLogin(authCtx.refreshToken);
-  //   console.log("ID TOKEN - REGENERATE TOKEN", id_token, refresh_token);
-  // } else {
-  //   // The token is still valid
-  //   console.log("ID TOKEN VALID!");
-  // }
-
-  useEffect(() => {
+    const idToken = authCtx.token;
     async function checkTokenExpiry() {
-      const idToken = authCtx.token;
       console.log("auth ctx", idToken);
 
       //Decode the ID token
@@ -80,6 +43,16 @@ function AllExpenses() {
 
       // Check if the token has expired
       const isTokenExpired = Date.now() >= expirationTime;
+      async function fetchExpense(token) {
+        setIsLoading(true);
+        try {
+          const response = await getExpenses(token);
+          dispatch(setExpense({ expenses: response }));
+        } catch (error) {
+          setErrorMsg("Some issue in Fetching...");
+        }
+        setIsLoading(false);
+      }
 
       if (isTokenExpired) {
         console.log("ID TOKEN EXPIRED!");
@@ -88,17 +61,20 @@ function AllExpenses() {
         if ((id_token, refresh_token)) {
           saveDataAsyncStorage("TOKEN", id_token);
           saveDataAsyncStorage("REFRESH TOKEN", refresh_token);
-          authCtx.token = id_token;
-          authCtx.refreshToken = refresh_token;
-          //console.log()
+          // authCtx.token = id_token;
+          // authCtx.refreshToken = refresh_token;
+          fetchExpense(id_token);
         }
       } else {
         console.log("ID TOKEN VALID!");
+        fetchExpense(idToken);
       }
     }
 
-    checkTokenExpiry();
-  }, []);
+    if (idToken) {
+      checkTokenExpiry();
+    }
+  }, [authCtx]);
 
   if (isLoading) {
     return <LoadingIndicator />;
