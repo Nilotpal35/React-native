@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { Colors } from "../../Colors/Colors";
+import { GlobalColor } from "../../Colors/GlobalStyles";
 
 const StickeyHeader = ({ text, finalAmount, MODE, styles, width }) => {
   return (
@@ -9,7 +10,7 @@ const StickeyHeader = ({ text, finalAmount, MODE, styles, width }) => {
           styles.sumContainer,
           {
             backgroundColor:
-              MODE === "LIGHT" ? Colors.reddish400 : Colors.primary300,
+              MODE === "LIGHT" ? GlobalColor.blue500 : GlobalColor.green400,
           },
         ]}
       >
@@ -22,7 +23,7 @@ const StickeyHeader = ({ text, finalAmount, MODE, styles, width }) => {
             {
               width: width > 400 ? 200 : 170,
               backgroundColor:
-                MODE === "LIGHT" ? Colors.reddish500 : Colors.primary600,
+                MODE === "LIGHT" ? Colors.reddish500 : GlobalColor.green500,
             },
           ]}
         >

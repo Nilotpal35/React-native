@@ -87,13 +87,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sumContainer: {
-    backgroundColor: Colors.primary400,
-    minHeight: 40,
+    //backgroundColor: Colors.primary400,
+    minHeight: 45,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     borderBottomColor: Colors.primary100,
-    borderBottomWidth: 2,
+    borderRadius:8,
+    margin:10
   },
   total: {
     alignItems: "center",
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
+    margin : 5
   },
   amountValue: {
     fontSize: 17,

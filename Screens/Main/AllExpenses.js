@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Colors } from "../../Colors/Colors";
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
 import { getExpenses } from "../../util/mutation";
 import { setExpense } from "../../Store/Redux/ExpensesSlice";
@@ -16,7 +16,6 @@ import ExpensesList from "../../Components/UI/ExpensesList";
 import LoadingIndicator from "../../Components/UI/LoadingIndicator";
 import { AuthContext } from "../../Store/Context/AuthContext";
 import jwtDecode from "jwt-decode";
-import createIconSet from "@expo/vector-icons/build/vendor/react-native-vector-icons/lib/create-icon-set";
 import { reLogin } from "../../util/http";
 import { saveDataAsyncStorage } from "../../AsyncStorgage/Storage";
 
@@ -61,6 +60,7 @@ function AllExpenses() {
         if ((id_token, refresh_token)) {
           saveDataAsyncStorage("TOKEN", id_token);
           saveDataAsyncStorage("REFRESH TOKEN", refresh_token);
+          authCtx.logIn(id_token, refresh_token);
           // authCtx.token = id_token;
           // authCtx.refreshToken = refresh_token;
           fetchExpense(id_token);
@@ -74,7 +74,7 @@ function AllExpenses() {
     if (idToken) {
       checkTokenExpiry();
     }
-  }, [authCtx]);
+  }, [authCtx,saveDataAsyncStorage]);
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -134,12 +134,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sumContainer: {
-    minHeight: 40,
+    minHeight: 45,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     borderBottomColor: Colors.primary100,
-    borderBottomWidth: 2,
+    //borderBottomWidth: 2,
+    borderRadius:8,
+    margin:10
   },
   total: {
     alignItems: "center",
@@ -157,6 +159,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
+    margin: 5
   },
   amountValue: {
     fontSize: 17,

@@ -9,6 +9,7 @@ import { Colors } from "../../Colors/Colors";
 import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
 import { ScreenMode } from "../../Store/Context/ScreenModeCtx";
+import { GlobalColor } from "../../Colors/GlobalStyles";
 
 function ExpenseItemGridTile({ id, title, amount, date, description }) {
   const screenModeCtx = useContext(ScreenMode);
@@ -35,7 +36,7 @@ function ExpenseItemGridTile({ id, title, amount, date, description }) {
           styles.tileContainer,
           {
             backgroundColor:
-              MODE === "LIGHT" ? Colors.reddish400 : Colors.primary300,
+              MODE === "LIGHT" ? GlobalColor.pruple400 : GlobalColor.green200,
           },
         ]}
       >
@@ -49,7 +50,7 @@ function ExpenseItemGridTile({ id, title, amount, date, description }) {
             {
               width: width > 400 ? 140 : 120,
               backgroundColor:
-                MODE === "LIGHT" ? Colors.reddish500 : Colors.primary600,
+                MODE === "LIGHT" ? Colors.reddish500 : GlobalColor.green300,
             },
           ]}
         >
@@ -66,8 +67,7 @@ export default ExpenseItemGridTile;
 
 const styles = StyleSheet.create({
   tileContainer: {
-    marginHorizontal: 5,
-    marginTop: 7,
+    margin:10,
     //backgroundColor: Colors.reddish400,
     paddingLeft: 15,
     flexDirection: "row",

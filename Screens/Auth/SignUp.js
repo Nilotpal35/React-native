@@ -24,7 +24,7 @@ export default function SignUp({ route, navigation }) {
           authCtx.logIn(idToken, refreshToken);
         }
       } catch (e) {
-        Alert.alert("SIGNUP TOKEN error", e.message);
+        console.log("SIGNUP TOKEN error", e.message);
       }
     } else {
       Alert.alert("warning", "fill all the fields");

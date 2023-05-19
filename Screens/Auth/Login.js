@@ -22,7 +22,7 @@ export default function LogIn({ route, navigation }) {
           authCtx.logIn(idToken, refreshToken);
         }
       } catch (e) {
-        Alert.alert("LOGIN TOKEN error", e.message);
+       console.log("LOGIN TOKEN error", e.message);
       }
     } else {
       Alert.alert("Warning ", "Fill all the fields properly");
