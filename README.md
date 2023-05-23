@@ -28,6 +28,10 @@ Below are some attached files from the offline app for better understanding :
 ![Simulator Screen Shot - iPhone 14 Pro Max - 2023-05-24 at 00 01 34](https://github.com/Nilotpal35/Practise/assets/50769314/94060da4-d7cd-4732-81c8-c869bfb90bb6)
 ![Simulator Screen Shot - iPhone 14 Pro Max - 2023-05-24 at 00 01 38](https://github.com/Nilotpal35/Practise/assets/50769314/d6db8517-fd21-49a3-bb3b-204e93f5bdfe)
 ![Simulator Screen Shot - iPhone 14 Pro Max - 2023-05-24 at 00 01 42](https://github.com/Nilotpal35/Practise/assets/50769314/73918b95-1d72-49a0-94f3-ac4b9bbad862)
+![Simulator Screen Shot - iPhone 14 Pro Max - 2023-05-24 at 00 31 29](https://github.com/Nilotpal35/Practise/assets/50769314/5ae60e60-655f-45c8-9f54-294b3c0bec0b)
+![Simulator Screen Shot - iPhone 14 Pro Max - 2023-05-24 at 00 31 38](https://github.com/Nilotpal35/Practise/assets/50769314/441b247b-c2a9-4e56-a3be-6a9f25489ef0)
+
+
 
 
 
