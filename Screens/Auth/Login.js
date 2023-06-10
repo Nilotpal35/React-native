@@ -1,22 +1,26 @@
 import { Alert, StyleSheet, View } from "react-native";
 import { GlobalColor } from "../../Colors/GlobalStyles";
 import LoginForm from "../../Components/Form/LoginForm";
-import { useCallback, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { validateUser } from "../../util/http";
 import { AuthContext } from "../../Store/Context/AuthContext";
 
-export default function LogIn({ route, navigation }) {
-  const [email, setEmail] = useState("");
-  const [passWord, setPassword] = useState("");
+export default function LogIn({navigation }) {
+  const [form , setForm] = useState({
+    email : '',
+    password : '',
+  })
   const authCtx = useContext(AuthContext);
 
+  console.log('FORM',form);
+
   async function formValidation() {
-    const emailValidate = email.includes("@");
-    const pwdValidate = passWord.length > 6;
+    const emailValidate = form.email.includes("@");
+    const pwdValidate = form.password.length > 6;
 
     if (emailValidate && pwdValidate) {
       try {
-        const { idToken, refreshToken } = await validateUser(email, passWord);
+        const { idToken, refreshToken } = await validateUser(form.email, form.password);
         console.log("fetched Token ", idToken, refreshToken);
         if (idToken) {
           authCtx.logIn(idToken, refreshToken);
@@ -30,10 +34,8 @@ export default function LogIn({ route, navigation }) {
   }
 
   const formData = {
-    email: email,
-    setEmail: setEmail,
-    passWord: passWord,
-    setPassword: setPassword,
+    form : form,
+    setForm : setForm,
     formValidation: formValidation,
     styles: styles,
     navigation: navigation,

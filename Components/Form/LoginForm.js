@@ -4,20 +4,23 @@ import {
   Text,
   TextInput,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import {useRef, useEffect } from "react";
 
 export default function LoginForm({
-  email,
-  setEmail,
-  password,
-  setPassword,
+  form,
+  setForm,
   formValidation,
   styles,
   navigation,
 }) {
+
+  const emailRef = useRef('');
+
+  useEffect(() => {
+    emailRef.current.focus();
+  } , []);
+
   return (
     <>
       <View>
@@ -43,12 +46,13 @@ export default function LoginForm({
             </Text>
             <TextInput
               style={styles.input}
-              value={email}
+              value={form.email}
               placeholder="Email"
               autoComplete="off"
               autoCapitalize="none"
               keyboardAppearance="dark"
-              onChangeText={setEmail}
+              onChangeText={(e) => setForm({...form, email : e})}
+              ref={emailRef}
             />
           </View>
           <View>
@@ -58,13 +62,13 @@ export default function LoginForm({
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TextInput
                 style={[styles.input, { flex: 1 }]}
-                value={password}
+                value={form.password}
                 secureTextEntry
                 placeholder="Password"
                 autoComplete="off"
                 autoCapitalize="none"
                 keyboardAppearance="dark"
-                onChangeText={setPassword}
+                onChangeText={(e) => setForm({...form, password : e})}
                 onSubmitEditing={formValidation}
               />
             </View>
