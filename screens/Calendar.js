@@ -2,11 +2,15 @@ import { useState } from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import Modal from "react-native-modal";
+import CalendarHeader from "../components/UI/CalendarUI/CalendarHeader";
 
 export default function Calendar() {
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState({
+    visible: false,
+    date: 1,
+  });
 
   const calendarHeader = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const getHeader = calendarHeader.map((item) => {
@@ -17,22 +21,18 @@ export default function Calendar() {
     );
   });
 
+  function pressHandler(date) {
+    setModalVisible({
+      ...modalVisible,
+      visible: !modalVisible.visible,
+      date: date,
+    });
+  }
+
   function getCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const startDay = new Date(year, month, 1).getDay();
     const calendar = [];
-
-    function pressHandler(year, month, date) {
-      console.log(
-        "clicked date",
-        new Date(year, month, date).toLocaleDateString("en-us", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      );
-      setModalVisible(!modalVisible);
-    }
 
     for (let i = 0; i < startDay; i++) {
       calendar.push(
@@ -46,91 +46,52 @@ export default function Calendar() {
     }
 
     for (let i = 1; i <= daysInMonth; i++) {
-      calendar.push(
+      if(i !== new Date().getDate()) {
+       calendar.push(
         <Pressable
           style={({ pressed }) => [
             pressed && { opacity: 0.5 },
             styles.calendar_box,
           ]}
-          onPress={() => pressHandler(year, month, i)}
+          onPress={() => pressHandler(i)}
+          
         >
-          <View key={`full-${JSON.stringify(new Date(i))}`}>
+          <View key={`full-${JSON.stringify(new Date(Date.now()))}`}>
             <Text style={{ color: "black", fontWeight: "500" }}>{i}</Text>
           </View>
         </Pressable>
       );
+    } else if(i ===  new Date().getDate() && month === new Date().getMonth()){   //current day highlighted in calendar
+        calendar.push(
+          <Pressable
+            style={({ pressed }) => [
+              pressed && { opacity: 0.5 },
+              styles.calendar_box,{backgroundColor : 'grey'}
+            ]}
+            onPress={() => pressHandler(i)}
+          >
+          <View key={`full-${JSON.stringify(new Date(Date.now()))}`}>
+              <Text style={{ color: "black", fontWeight: "700" }}>{i}</Text>
+            </View>
+          </Pressable>
+      )}
     }
     return calendar;
   }
 
+  const calendarProps = {
+    year: year,
+    setYear: setYear,
+    month: month,
+    setMonth: setMonth,
+  };
+
   return (
     <>
-      <Modal
-        isVisible={modalVisible}
-        onBackdropPress={() => setModalVisible(!modalVisible)}
-        backdropColor="grey"
-        style={{ backgroundColor: "white" }}
-      >
-        <View>
-          <Text>Hi this is best modal</Text>
-        </View>
-      </Modal>
       <View style={styles.root}>
-        <Text style={[styles.header]}>Calendar</Text>
         <View style={styles.calendar_outer_box}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              marginBottom: 20,
-            }}
-          >
-            <Pressable
-              style={({ pressed }) => [
-                pressed && { opacity: 0.5 },
-                { marginHorizontal: 10 },
-              ]}
-              onPress={() => setYear((cYear) => cYear - 1)}
-            >
-              <AntDesign name="left" size={20} color="white" />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                pressed && { opacity: 0.5 },
-                { marginHorizontal: 13 },
-              ]}
-              onPress={() => setMonth((cMonth) => cMonth - 1)}
-            >
-              <AntDesign name="left" size={20} color="white" />
-            </Pressable>
-            <View>
-              <Text style={{ color: "white", fontWeight: "500", fontSize: 18 }}>
-                {new Date(year, month).toLocaleDateString("en-us", {
-                  month: "long",
-                  year: "numeric",
-                })}
-              </Text>
-            </View>
-            <Pressable
-              style={({ pressed }) => [
-                pressed && { opacity: 0.5 },
-                { marginHorizontal: 13 },
-              ]}
-              onPress={() => setMonth((cMonth) => cMonth + 1)}
-            >
-              <AntDesign name="right" size={20} color="white" />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                pressed && { opacity: 0.5 },
-                { marginHorizontal: 10 },
-              ]}
-              onPress={() => setYear((cYear) => cYear + 1)}
-            >
-              <AntDesign name="right" size={20} color="white" />
-            </Pressable>
-          </View>
-          <View style={{ width: 300, height: 250 }}>
+          <CalendarHeader {...calendarProps} />
+          <View style={{ width: 300, padding: 15}}>
             <View style={[styles.calendar]}>
               {getHeader}
               {getCalendar()}
@@ -147,7 +108,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     //marginTop : 50,
-    paddingHorizontal: 20,
+    //paddingHorizontal: 20,
     height: "100%",
     backgroundColor: "rgb(80,35,77)",
   },
@@ -185,11 +146,24 @@ const styles = StyleSheet.create({
   },
   calendar_outer_box: {
     backgroundColor: "rgb(53, 1, 53)",
-    width: 320,
-    height: 300,
+    //width: 320,
+    //height: 300,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
     paddingTop: 15,
+    paddingBottom: 0
+  },
+  modal: {
+    flex: 1,
+    margin: 0,
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    //padding: 16,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    height: "50%",
   },
 });
